@@ -2,10 +2,12 @@
 Accent_SoftDelete
 *****************
 
-|Build_Status|
+|Build_Status| |Coverage_Status|
 
-.. |Build_Status| image:: https://circleci.com/gh/AccentDesign/Accent_SoftDelete.svg?style=svg&circle-token=d9427f13f6a15f62a81775f1d4cc2e656858b7f3
+.. |Build_Status| image:: https://circleci.com/gh/AccentDesign/Accent_SoftDelete.svg?style=svg
    :target: https://circleci.com/gh/AccentDesign/Accent_SoftDelete
+.. |Coverage_Status| image:: http://img.shields.io/coveralls/AccentDesign/Accent_SoftDelete/master.svg
+   :target: https://coveralls.io/r/AccentDesign/Accent_SoftDelete?branch=master
 
 Description
 ***********
