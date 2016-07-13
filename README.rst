@@ -53,7 +53,7 @@ Model defs::
        child = models.ForeignKey(Child, on_delete=models.DO_NOTHING)
 
 
-Admin site (example of above models)::
+Model form, will allow a selected fk that has been deleted available until saved (example of above models)::
 
    from soft_delete.admin import ActiveAdmin
    from soft_delete.helpers import set_soft_delete_foreign_key
