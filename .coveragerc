@@ -1,0 +1,13 @@
+[run]
+branch = True
+source = .
+omit =
+    setup.py
+    *migrations/*
+    *tests/*
+parallel = true
+
+[report]
+exclude_lines =
+    pragma: no cover
+    raise NotImplementedError

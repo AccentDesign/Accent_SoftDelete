@@ -1,0 +1,117 @@
+Metadata-Version: 1.1
+Name: soft-delete
+Version: 0.0.1
+Summary: Soft delete plugin for django
+Home-page: https://github.com/AccentDesign/Accent_SoftDelete
+Author: Stuart George
+Author-email: stuart@accentdesign.com
+License: MIT
+Description: *****************
+        Hydratech Desktop
+        *****************
+        
+        |Build_Status|
+        
+        .. |Build_Status| image:: https://circleci.com/gh/AccentDesign/hydratech_desktop.svg?style=svg&circle-token=111b2aba4ed7baf3d0bfcc3d2954304ae073b928
+           :target: https://circleci.com/gh/AccentDesign/hydratech_desktop
+        
+        Description
+        ***********
+        
+        Bare bones starter project complete with the following
+        
+        - Email authentication
+        - Login, password reset, password change
+        - Bootstrap3
+        
+        Getting Started
+        ***************
+        
+        1, Clone the repo::
+        
+            git clone https://github.com/AccentDesign/hydratech_desktop.git
+        
+        2, You will also need some local settings as the default's are production ready.
+        
+        Copy the file ``app/local_settings.local`` to ``app/local_settings.py``
+        In here you can define your own settings.
+        
+        
+        3, Docker & Python
+        
+        Build the container::
+        
+            docker-compose build
+        
+        Run python migrations::
+        
+            docker-compose run app python manage.py migrate
+        
+        Create yourself a superuser::
+        
+            docker-compose run app python manage.py createsuperuser --email=admin@example.com --first_name=Admin --last_name=User
+        
+        Up the container::
+        
+            docker-compose up
+        
+        
+        Ready!!
+        *******
+        
+        The container is ready at http://<docker host ip>:8000/ and a mail server ready at http://<docker host ip>:1080/
+        
+        
+        Testing
+        *******
+        
+        To see the test results and coverage report run::
+        
+           docker-compose run app make test
+        
+        The html coverage report is visible in the browser by looking at the htmlcov/index.html once the tests have run.
+        
+        
+        Styling
+        *******
+        
+        1, You will need node js installed, please see online for setup
+        
+        2, To make any style tweaks you will need to install all project dependencies like so::
+        
+            npm install
+        
+        you will propably need gulp and gulp-cli as global dependencies::
+        
+            npm install -g gulp gulp-cli
+        
+        3, ``static/scss`` is where you set up your styles, ``static/scss/boobstrap/_boobstrap/_variables.scss`` are the boorstrap variables used.
+        
+        4, the ``gulpfile.js`` has a list of tasks to run, to get you started running just gulp will build, compress and repopulate
+        the ``static/dist`` folder::
+        
+            gulp
+        
+            eg:
+        
+            ....
+            [09:43:21] Finished 'default' after 271 ms
+        
+        
+        
+        
+Keywords: django,soft,delete,accent,design
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Web Environment
+Classifier: Framework :: Django
+Classifier: Framework :: Django :: 1.8
+Classifier: Framework :: Django :: 1.9
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Topic :: Internet :: WWW/HTTP

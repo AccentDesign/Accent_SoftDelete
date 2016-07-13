@@ -1,0 +1,13 @@
+machine:
+  python:
+    version: '3.4.3'
+
+dependencies:
+  override:
+    - pip install -r test_requirements.txt
+
+test:
+  override:
+    - make test
+  post:
+    - cp -r htmlcov $CIRCLE_ARTIFACTS

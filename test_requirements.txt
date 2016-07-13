@@ -1,0 +1,9 @@
+# The app itself
+-e .
+
+# Runtime dependencies
+django
+
+# Test dependencies
+coverage
+flake8
