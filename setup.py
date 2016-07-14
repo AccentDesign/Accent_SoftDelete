@@ -2,13 +2,13 @@ from setuptools import setup, find_packages
 
 setup(
     name='soft-delete',
-    version='0.0.1',
+    version='0.0.2',
     description='Soft delete plugin for django',
     long_description=open('README.rst').read(),
     author='Stuart George',
     author_email='stuart@accentdesign.com',
     url='https://github.com/AccentDesign/Accent_SoftDelete',
-    download_url='https://github.com/AccentDesign/Accent_SoftDelete/releases/tag/0.0.1',
+    download_url='https://github.com/AccentDesign/Accent_SoftDelete/releases/tag/0.0.2',
     license='MIT',
     packages=[
         'soft_delete'
