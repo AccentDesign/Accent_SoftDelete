@@ -7,98 +7,73 @@ Author: Stuart George
 Author-email: stuart@accentdesign.com
 License: MIT
 Description: *****************
-        Hydratech Desktop
+        Accent_SoftDelete
         *****************
         
-        |Build_Status|
+        |Build_Status| |Coverage_Status|
         
-        .. |Build_Status| image:: https://circleci.com/gh/AccentDesign/hydratech_desktop.svg?style=svg&circle-token=111b2aba4ed7baf3d0bfcc3d2954304ae073b928
-           :target: https://circleci.com/gh/AccentDesign/hydratech_desktop
+        .. |Build_Status| image:: https://circleci.com/gh/AccentDesign/Accent_SoftDelete.svg?style=svg
+           :target: https://circleci.com/gh/AccentDesign/Accent_SoftDelete
+        .. |Coverage_Status| image:: http://img.shields.io/coveralls/AccentDesign/Accent_SoftDelete/master.svg
+           :target: https://coveralls.io/r/AccentDesign/Accent_SoftDelete?branch=master
         
         Description
         ***********
         
-        Bare bones starter project complete with the following
+        Soft delete plugin for django
         
-        - Email authentication
-        - Login, password reset, password change
-        - Bootstrap3
         
         Getting Started
         ***************
         
-        1, Clone the repo::
+        Installation::
         
-            git clone https://github.com/AccentDesign/hydratech_desktop.git
+           pip install -e git://github.com/AccentDesign/Accent_SoftDelete.git#egg=soft_delete
         
-        2, You will also need some local settings as the default's are production ready.
+        settings.py::
         
-        Copy the file ``app/local_settings.local`` to ``app/local_settings.py``
-        In here you can define your own settings.
-        
-        
-        3, Docker & Python
-        
-        Build the container::
-        
-            docker-compose build
-        
-        Run python migrations::
-        
-            docker-compose run app python manage.py migrate
-        
-        Create yourself a superuser::
-        
-            docker-compose run app python manage.py createsuperuser --email=admin@example.com --first_name=Admin --last_name=User
-        
-        Up the container::
-        
-            docker-compose up
+           INSTALLED_APPS = [
+               ...
+               'soft_delete',
+               ...
+           ]
         
         
-        Ready!!
-        *******
+        Usage
+        *****
         
-        The container is ready at http://<docker host ip>:8000/ and a mail server ready at http://<docker host ip>:1080/
+        Model defs::
         
-        
-        Testing
-        *******
-        
-        To see the test results and coverage report run::
-        
-           docker-compose run app make test
-        
-        The html coverage report is visible in the browser by looking at the htmlcov/index.html once the tests have run.
+           from soft_delete.models import SoftDeleteAbstract
         
         
-        Styling
-        *******
-        
-        1, You will need node js installed, please see online for setup
-        
-        2, To make any style tweaks you will need to install all project dependencies like so::
-        
-            npm install
-        
-        you will propably need gulp and gulp-cli as global dependencies::
-        
-            npm install -g gulp gulp-cli
-        
-        3, ``static/scss`` is where you set up your styles, ``static/scss/boobstrap/_boobstrap/_variables.scss`` are the boorstrap variables used.
-        
-        4, the ``gulpfile.js`` has a list of tasks to run, to get you started running just gulp will build, compress and repopulate
-        the ``static/dist`` folder::
-        
-            gulp
-        
-            eg:
-        
-            ....
-            [09:43:21] Finished 'default' after 271 ms
+           class Child(SoftDeleteAbstract):
+               name = models.CharField(max_length=20)
         
         
+           class Parent1(SoftDeleteAbstract):
+               name = models.CharField(max_length=20)
+               child = models.ForeignKey(Child, on_delete=models.CASCADE)
         
+        
+           class Parent2(SoftDeleteAbstract):
+               name = models.CharField(max_length=20)
+               child = models.ForeignKey(Child, on_delete=models.DO_NOTHING)
+        
+        
+        Model form, will allow a selected fk that has been deleted available until saved (example of above models)::
+        
+           from soft_delete.admin import ActiveAdmin
+           from soft_delete.helpers import set_soft_delete_foreign_key
+        
+           class MyForm(forms.ModelForm):
+               class Meta:
+                   model = Parent2
+                   fields = '__all__'
+        
+               def __init__(self, *args, **kwargs):
+                   super(MyForm, self).__init__(*args, **kwargs)
+                   set_soft_delete_foreign_key(self.fields['child'], self.instance, 'child', Child)
         
 Keywords: django,soft,delete,accent,design
 Platform: UNKNOWN
