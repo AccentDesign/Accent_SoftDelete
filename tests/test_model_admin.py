@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from soft_delete.admin import ActiveAdmin
 from soft_delete.helpers import set_soft_delete_foreign_key
-from .models import Child, ParentFKNothing
+from .models import Child, Parent
 
 
 class MockRequest(object):
@@ -16,7 +16,7 @@ request = MockRequest()
 
 class MyForm(forms.ModelForm):
     class Meta:
-        model = ParentFKNothing
+        model = Parent
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -43,12 +43,12 @@ class ModelAdminTests(TestCase):
     def test_active_only_in_options_when_none_selected(self):
         child1 = Child.objects.create(name='child 1')
         Child.objects.create(name='child 2', deleted=True)
-        parent = ParentFKNothing()
+        parent = Parent()
 
         class MyAdmin(ActiveAdmin):
             form = MyForm
 
-        ma = MyAdmin(ParentFKNothing, self.site)
+        ma = MyAdmin(Parent, self.site)
         form = ma.get_form(request)(instance=parent)
 
         self.assertHTMLEqual(
@@ -63,12 +63,12 @@ class ModelAdminTests(TestCase):
     def test_active_only_in_options_when_active_selected(self):
         child1 = Child.objects.create(name='child 1')
         Child.objects.create(name='child 2', deleted=True)
-        parent = ParentFKNothing.objects.create(child=child1)
+        parent = Parent.objects.create(child=child1)
 
         class MyAdmin(ActiveAdmin):
             form = MyForm
 
-        ma = MyAdmin(ParentFKNothing, self.site)
+        ma = MyAdmin(Parent, self.site)
         form = ma.get_form(request)(instance=parent)
 
         self.assertHTMLEqual(
@@ -83,12 +83,12 @@ class ModelAdminTests(TestCase):
     def test_deleted_in_options_deleted_selected(self):
         child1 = Child.objects.create(name='child 1')
         child2 = Child.objects.create(name='child 2', deleted=True)
-        parent = ParentFKNothing.objects.create(child=child2)
+        parent = Parent.objects.create(child=child2)
 
         class MyAdmin(ActiveAdmin):
             form = MyForm
 
-        ma = MyAdmin(ParentFKNothing, self.site)
+        ma = MyAdmin(Parent, self.site)
         form = ma.get_form(request)(instance=parent)
 
         self.assertHTMLEqual(

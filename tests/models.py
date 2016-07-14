@@ -13,9 +13,15 @@ class Child(SoftDeleteAbstract):
         return self.name
 
 
-class ParentFKNothing(SoftDeleteAbstract):
+class Parent(SoftDeleteAbstract):
     child = models.ForeignKey(Child, on_delete=models.DO_NOTHING)
 
 
-class ParentFKCascade(SoftDeleteAbstract):
-    child = models.ForeignKey(Child, on_delete=models.CASCADE)
+class Group(SoftDeleteAbstract):
+    name = models.CharField(max_length=20)
+    members = models.ManyToManyField(Child, through='Membership')
+
+
+class Membership(SoftDeleteAbstract):
+    child = models.ForeignKey(Child, on_delete=models.DO_NOTHING)
+    group = models.ForeignKey(Group, on_delete=models.DO_NOTHING)

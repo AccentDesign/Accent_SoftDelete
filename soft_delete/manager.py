@@ -19,6 +19,8 @@ class SoftDeleteQuerySet(models.query.QuerySet):
 
 
 class SoftDeleteManager(models.Manager):
+    use_for_related_fields = True
+
     def get_queryset(self):
         return SoftDeleteQuerySet(self.model, using=self._db)
 

@@ -1,6 +1,7 @@
+from django.db import models
 from django.test import TestCase
 
-from tests.models import Child, ParentFKNothing, ParentFKCascade
+from tests.models import Child, Group, Membership, Parent
 from soft_delete.manager import SoftDeleteManager
 from soft_delete.model import SoftDeleteAbstract
 
@@ -115,26 +116,65 @@ class CascadeForeignKeyTests(TestCase):
 
     def test_deleting_object_does_not_cascade(self):
         child = Child.objects.create(name="child")
-        ParentFKNothing.objects.create(child=child)
+        Parent.objects.create(child=child)
         child.delete()
-        self.assertFalse(ParentFKNothing.objects.get(id=child.id).deleted)
+        self.assertFalse(Parent.objects.get(id=child.id).deleted)
 
     def test_deleting_object_is_still_the_referenced_object_in_a_foreign_key(self):
         child = Child.objects.create(name="child")
-        parent = ParentFKNothing.objects.create(child=child)
+        parent = Parent.objects.create(child=child)
         child.delete()
-        self.assertEqual(ParentFKNothing.objects.get(id=parent.id).child, child)
+        self.assertEqual(Parent.objects.get(id=parent.id).child, child)
 
     def test_deleting_object_will_cascade_when_required(self):
+        Parent._meta.get_field('child').rel.on_delete = models.CASCADE
         child = Child.objects.create(name="child")
-        ParentFKCascade.objects.create(child=child)
+        Parent.objects.create(child=child)
         child.delete()
         self.assertEqual(Child.objects.all().count(), 1)
         self.assertEqual(Child.objects.active().count(), 0)
         self.assertEqual(Child.objects.deleted().count(), 1)
-        self.assertEqual(ParentFKCascade.objects.all().count(), 1)
-        self.assertEqual(ParentFKCascade.objects.active().count(), 0)
-        self.assertEqual(ParentFKCascade.objects.deleted().count(), 1)
+        self.assertEqual(Parent.objects.all().count(), 1)
+        self.assertEqual(Parent.objects.active().count(), 0)
+        self.assertEqual(Parent.objects.deleted().count(), 1)
+
+
+class CascadeManyToManyThroughTests(TestCase):
+
+    def test_deleting_object_is_still_in_the_joining_relationship(self):
+        child1 = Child.objects.create(name="child 1")
+        child2 = Child.objects.create(name="child 2")
+        group = Group.objects.create(name="group")
+        Membership.objects.create(group=group, child=child1)
+        Membership.objects.create(group=group, child=child2)
+        child1.delete()
+        self.assertEqual(Group.objects.all().count(), 1)
+        self.assertEqual(Group.objects.active().count(), 1)
+        self.assertEqual(Group.objects.deleted().count(), 0)
+        self.assertEqual(Membership.objects.all().count(), 2)
+        self.assertEqual(Membership.objects.active().count(), 2)
+        self.assertEqual(Membership.objects.deleted().count(), 0)
+        self.assertEqual(Child.objects.all().count(), 2)
+        self.assertEqual(Child.objects.active().count(), 1)
+        self.assertEqual(Child.objects.deleted().count(), 1)
+
+    def test_deleting_object_will_cascade_when_required(self):
+        Membership._meta.get_field('child').rel.on_delete = models.CASCADE
+        child1 = Child.objects.create(name="child 1")
+        child2 = Child.objects.create(name="child 2")
+        group = Group.objects.create(name="group")
+        Membership.objects.create(group=group, child=child1)
+        Membership.objects.create(group=group, child=child2)
+        child1.delete()
+        self.assertEqual(Group.objects.all().count(), 1)
+        self.assertEqual(Group.objects.active().count(), 1)
+        self.assertEqual(Group.objects.deleted().count(), 0)
+        self.assertEqual(Membership.objects.all().count(), 2)
+        self.assertEqual(Membership.objects.active().count(), 1)
+        self.assertEqual(Membership.objects.deleted().count(), 1)
+        self.assertEqual(Child.objects.all().count(), 2)
+        self.assertEqual(Child.objects.active().count(), 1)
+        self.assertEqual(Child.objects.deleted().count(), 1)
 
 
 class ModelAbstractTests(TestCase):
