@@ -20,7 +20,7 @@ Getting Started
 
 Installation::
 
-   pip install -e git://github.com/AccentDesign/Accent_SoftDelete.git@master#egg=soft_delete
+   pip install git+https://github.com/AccentDesign/Accent_SoftDelete.git@master#egg=soft_delete
 
 settings.py::
 
