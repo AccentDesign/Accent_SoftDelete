@@ -1,3 +1,5 @@
+LICENSE
+MANIFEST.in
 README.rst
 soft_delete/__init__.py
 soft_delete/admin.py
@@ -10,8 +12,3 @@ soft_delete.egg-info/SOURCES.txt
 soft_delete.egg-info/dependency_links.txt
 soft_delete.egg-info/requires.txt
 soft_delete.egg-info/top_level.txt
-tests/__init__.py
-tests/models.py
-tests/settings.py
-tests/test_manager.py
-tests/test_model_admin.py
