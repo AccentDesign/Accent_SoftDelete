@@ -1,6 +1,6 @@
 from django.db import models
 
-from soft_delete.model import SoftDeleteAbstract
+from soft_delete.models import SoftDeleteAbstract
 
 
 class Child(SoftDeleteAbstract):

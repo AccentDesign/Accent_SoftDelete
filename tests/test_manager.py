@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from tests.models import Child, Group, Membership, Parent
 from soft_delete.manager import SoftDeleteManager
-from soft_delete.model import SoftDeleteAbstract
+from soft_delete.models import SoftDeleteAbstract
 
 
 class ModelManagerTests(TestCase):

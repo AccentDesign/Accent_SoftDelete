@@ -1,8 +1,8 @@
 from django import forms
-from django.contrib.admin.sites import AdminSite
+from django.contrib import admin
 from django.test import TestCase
 
-from soft_delete.admin import ActiveAdmin
+from soft_delete.admin import ActiveAdminMixin
 from soft_delete.helpers import set_soft_delete_foreign_key
 from .models import Child, Parent
 
@@ -27,13 +27,13 @@ class MyForm(forms.ModelForm):
 class ModelAdminTests(TestCase):
 
     def setUp(self):
-        self.site = AdminSite()
+        self.site = admin.sites.AdminSite()
 
     def test_queryset_only_contains_active(self):
         object = Child.objects.create(name='foo')
         Child.objects.create(name='bar', deleted=True)
 
-        class MyAdmin(ActiveAdmin):
+        class MyAdmin(ActiveAdminMixin, admin.ModelAdmin):
             pass
 
         ma = MyAdmin(Child, self.site)
@@ -45,7 +45,7 @@ class ModelAdminTests(TestCase):
         Child.objects.create(name='child 2', deleted=True)
         parent = Parent()
 
-        class MyAdmin(ActiveAdmin):
+        class MyAdmin(ActiveAdminMixin, admin.ModelAdmin):
             form = MyForm
 
         ma = MyAdmin(Parent, self.site)
@@ -65,7 +65,7 @@ class ModelAdminTests(TestCase):
         Child.objects.create(name='child 2', deleted=True)
         parent = Parent.objects.create(child=child1)
 
-        class MyAdmin(ActiveAdmin):
+        class MyAdmin(ActiveAdminMixin, admin.ModelAdmin):
             form = MyForm
 
         ma = MyAdmin(Parent, self.site)
@@ -85,7 +85,7 @@ class ModelAdminTests(TestCase):
         child2 = Child.objects.create(name='child 2', deleted=True)
         parent = Parent.objects.create(child=child2)
 
-        class MyAdmin(ActiveAdmin):
+        class MyAdmin(ActiveAdminMixin, admin.ModelAdmin):
             form = MyForm
 
         ma = MyAdmin(Parent, self.site)
