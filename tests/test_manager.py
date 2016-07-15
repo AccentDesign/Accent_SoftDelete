@@ -141,6 +141,26 @@ class CascadeForeignKeyTests(TestCase):
 
 class CascadeManyToManyThroughTests(TestCase):
 
+    def setUp(self):
+        Membership._meta.get_field('group').rel.on_delete = models.DO_NOTHING
+        Membership._meta.get_field('child').rel.on_delete = models.DO_NOTHING
+
+    def test_deleting_m2m_base_object_cascades_to_joining_through_model(self):
+        Membership._meta.get_field('group').rel.on_delete = models.CASCADE
+        group = Group.objects.create(name="group")
+        child = Child.objects.create(name="child")
+        Membership.objects.create(group=group, child=child)
+        group.delete()
+        self.assertEqual(Group.objects.all().count(), 1)
+        self.assertEqual(Group.objects.active().count(), 0)
+        self.assertEqual(Group.objects.deleted().count(), 1)
+        self.assertEqual(Membership.objects.all().count(), 1)
+        self.assertEqual(Membership.objects.active().count(), 0)
+        self.assertEqual(Membership.objects.deleted().count(), 1)
+        self.assertEqual(Child.objects.all().count(), 1)
+        self.assertEqual(Child.objects.active().count(), 1)
+        self.assertEqual(Child.objects.deleted().count(), 0)
+
     def test_deleting_object_is_still_in_the_joining_relationship(self):
         child1 = Child.objects.create(name="child 1")
         child2 = Child.objects.create(name="child 2")
