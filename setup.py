@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='soft-delete',
-    version='0.0.5',
+    version='0.0.7',
     description='Soft delete plugin for django',
     long_description=open('README.rst').read(),
     author='Stuart George',

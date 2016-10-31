@@ -3,6 +3,12 @@ from django.db.models import Q
 
 
 class SoftDeleteQuerySet(models.query.QuerySet):
+    def active(self):
+        return self.filter(deleted=False)
+
+    def deleted(self):
+        return self.filter(deleted=True)
+
     def delete(self):
         assert self.query.can_filter(), "Cannot use 'limit' or 'offset' with delete."
         for object in self.all():
@@ -10,30 +16,30 @@ class SoftDeleteQuerySet(models.query.QuerySet):
         self._result_cache = None
     delete.alters_data = True
 
-    def undelete(self):
-        assert self.query.can_filter(), "Cannot use 'limit' or 'offset' with delete."
-        for object in self.all():
-            object.undelete()
-        self._result_cache = None
-    undelete.alters_data = True
-
 
 class SoftDeleteManager(models.Manager):
-    use_for_related_fields = True
 
     def get_queryset(self):
-        return SoftDeleteQuerySet(self.model, using=self._db)
+        queryset = SoftDeleteQuerySet(self.model, using=self._db)
+        return queryset.active()
 
     def deleted(self):
-        return self.get_queryset().filter(deleted=True)
+        queryset = SoftDeleteQuerySet(self.model, using=self._db)
+        return queryset.deleted()
 
-    def active(self):
-        return self.get_queryset().filter(deleted=False)
+    def all_with_deleted(self):
+        queryset = SoftDeleteQuerySet(self.model, using=self._db)
+        return queryset
 
-    def active_including_by_PK(self, pk=None):
+    def all_including_by_pk(self, pk=None):
         if pk:
-            return self.get_queryset().filter(Q(deleted=False) | Q(pk=pk))
-        return self.active()
+            return self.all_with_deleted().filter(Q(deleted=False) | Q(pk=pk))
+        return self.get_queryset()
 
     def all(self):
         return self.get_queryset()
+
+    def get(self, allow_deleted=False, *args, **kwargs):
+        if allow_deleted or 'pk' in kwargs:
+            return self.all_with_deleted().get(*args, **kwargs)
+        return self.get_queryset().get(*args, **kwargs)

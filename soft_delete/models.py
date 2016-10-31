@@ -17,7 +17,3 @@ class SoftDeleteAbstract(models.Model):
         for object in related_objects(self):
             object.delete()
         super(SoftDeleteAbstract, self).save(**kwargs)
-
-    def undelete(self, **kwargs):
-        self.deleted = False
-        super(SoftDeleteAbstract, self).save(**kwargs)

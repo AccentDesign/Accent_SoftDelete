@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: soft-delete
-Version: 0.0.5
+Version: 0.0.7
 Summary: Soft delete plugin for django
 Home-page: https://github.com/AccentDesign/Accent_SoftDelete
 Author: Stuart George

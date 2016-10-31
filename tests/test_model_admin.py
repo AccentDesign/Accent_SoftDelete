@@ -2,7 +2,6 @@ from django import forms
 from django.contrib import admin
 from django.test import TestCase
 
-from soft_delete.admin import ActiveAdminMixin
 from soft_delete.helpers import set_soft_delete_foreign_key
 from .models import Child, Parent
 
@@ -33,7 +32,7 @@ class ModelAdminTests(TestCase):
         object = Child.objects.create(name='foo')
         Child.objects.create(name='bar', deleted=True)
 
-        class MyAdmin(ActiveAdminMixin, admin.ModelAdmin):
+        class MyAdmin(admin.ModelAdmin):
             pass
 
         ma = MyAdmin(Child, self.site)
@@ -45,7 +44,7 @@ class ModelAdminTests(TestCase):
         Child.objects.create(name='child 2', deleted=True)
         parent = Parent()
 
-        class MyAdmin(ActiveAdminMixin, admin.ModelAdmin):
+        class MyAdmin(admin.ModelAdmin):
             form = MyForm
 
         ma = MyAdmin(Parent, self.site)
@@ -54,7 +53,7 @@ class ModelAdminTests(TestCase):
         self.assertHTMLEqual(
             str(form["child"]),
             '<div class="related-widget-wrapper">'
-            '<select name="child" id="id_child">'
+            '<select name="child" id="id_child" required>'
             '<option value="" selected="selected">---------</option>'
             '<option value="%d">child 1</option>'
             '</select></div>' % child1.id
@@ -65,7 +64,7 @@ class ModelAdminTests(TestCase):
         Child.objects.create(name='child 2', deleted=True)
         parent = Parent.objects.create(child=child1)
 
-        class MyAdmin(ActiveAdminMixin, admin.ModelAdmin):
+        class MyAdmin(admin.ModelAdmin):
             form = MyForm
 
         ma = MyAdmin(Parent, self.site)
@@ -74,7 +73,7 @@ class ModelAdminTests(TestCase):
         self.assertHTMLEqual(
             str(form["child"]),
             '<div class="related-widget-wrapper">'
-            '<select name="child" id="id_child">'
+            '<select name="child" id="id_child" required>'
             '<option value="">---------</option>'
             '<option value="%d" selected="selected">child 1</option>'
             '</select></div>' % child1.id
@@ -85,7 +84,7 @@ class ModelAdminTests(TestCase):
         child2 = Child.objects.create(name='child 2', deleted=True)
         parent = Parent.objects.create(child=child2)
 
-        class MyAdmin(ActiveAdminMixin, admin.ModelAdmin):
+        class MyAdmin(admin.ModelAdmin):
             form = MyForm
 
         ma = MyAdmin(Parent, self.site)
@@ -94,7 +93,7 @@ class ModelAdminTests(TestCase):
         self.assertHTMLEqual(
             str(form["child"]),
             '<div class="related-widget-wrapper">'
-            '<select name="child" id="id_child">'
+            '<select name="child" id="id_child" required>'
             '<option value="">---------</option>'
             '<option value="%d">child 1</option>'
             '<option value="%d" selected="selected">child 2</option>'

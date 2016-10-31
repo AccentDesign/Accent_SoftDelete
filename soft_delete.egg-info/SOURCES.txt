@@ -3,7 +3,6 @@ MANIFEST.in
 README.rst
 setup.py
 soft_delete/__init__.py
-soft_delete/admin.py
 soft_delete/helpers.py
 soft_delete/manager.py
 soft_delete/models.py
