@@ -1,7 +1,8 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.test import TestCase
 
-from tests.models import Child, Group, Membership, Parent
+from tests.models import Child, Group, Membership, Parent, UniqueModel
 from soft_delete.manager import SoftDeleteManager
 from soft_delete.models import SoftDeleteAbstract
 
@@ -172,6 +173,45 @@ class CascadeManyToManyThroughTests(TestCase):
         self.assertEqual(Child.objects.all_with_deleted().count(), 2)
         self.assertEqual(Child.objects.all().count(), 1)
         self.assertEqual(Child.objects.deleted().count(), 1)
+
+
+class ValidateUniqueTests(TestCase):
+
+    def test_single_field_validates_correctly(self):
+        UniqueModel.objects.create(name='Bill', age=40, gender='male')
+        invalid = UniqueModel(name='Bill', age=41, gender='male')
+        with self.assertRaisesMessage(
+                ValidationError,
+                'Unique model with this Name already exists.'
+        ):
+            invalid.full_clean()
+
+    def test_unique_together_validates_correctly(self):
+        UniqueModel.objects.create(name='Bill', age=40, gender='male')
+        invalid = UniqueModel(name='Ted', age=40, gender='male')
+        with self.assertRaisesMessage(
+                ValidationError,
+                'Unique model with this Age and Gender already exists.'
+        ):
+            invalid.full_clean()
+
+    def test_single_field_validates_correctly_when_deleted(self):
+        UniqueModel.objects.create(name='Bill', age=40, gender='male', deleted=True)
+        invalid = UniqueModel(name='Bill', age=41, gender='male')
+        with self.assertRaisesMessage(
+                ValidationError,
+                'Unique model with this Name already exists.'
+        ):
+            invalid.full_clean()
+
+    def test_unique_together_validates_correctly_when_deleted(self):
+        UniqueModel.objects.create(name='Bill', age=40, gender='male', deleted=True)
+        invalid = UniqueModel(name='Ted', age=40, gender='male')
+        with self.assertRaisesMessage(
+                ValidationError,
+                'Unique model with this Age and Gender already exists.'
+        ):
+            invalid.full_clean()
 
 
 class ModelAbstractTests(TestCase):
